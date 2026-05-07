@@ -1,0 +1,34 @@
+[
+  {
+    "nombre": "Hospital Metropolitano",
+    "ciudad": "Quito",
+    "especialidades": ["cardiología", "traumatología", "ginecología", "neurología", "pediatría"],
+    "nivel": "alta complejidad",
+    "costo_consulta_base": 80,
+    "convenios": ["basico", "medio", "premium"]
+  },
+  {
+    "nombre": "Clínica Santa María",
+    "ciudad": "Quito",
+    "especialidades": ["medicina general", "pediatría", "dermatología", "ginecología"],
+    "nivel": "media complejidad",
+    "costo_consulta_base": 50,
+    "convenios": ["medio", "premium"]
+  },
+  {
+    "nombre": "Hospital Kennedy",
+    "ciudad": "Guayaquil",
+    "especialidades": ["cardiología", "oncología", "traumatología", "medicina general", "neurología"],
+    "nivel": "alta complejidad",
+    "costo_consulta_base": 75,
+    "convenios": ["basico", "medio", "premium"]
+  },
+  {
+    "nombre": "Clínica Guayaquil",
+    "ciudad": "Guayaquil",
+    "especialidades": ["medicina general", "dermatología", "pediatría"],
+    "nivel": "media complejidad",
+    "costo_consulta_base": 40,
+    "convenios": ["basico", "medio", "premium"]
+  }
+]

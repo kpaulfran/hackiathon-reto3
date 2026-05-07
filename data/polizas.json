@@ -1,0 +1,47 @@
+[
+  {
+    "id": "PAC-001",
+    "nombre": "Carlos Mendoza",
+    "plan": "premium",
+    "vigente": true,
+    "deducible_anual": 500,
+    "deducible_usado": 200,
+    "preexistencias": ["diabetes", "hipertensión"]
+  },
+  {
+    "id": "PAC-002",
+    "nombre": "María Torres",
+    "plan": "medio",
+    "vigente": true,
+    "deducible_anual": 300,
+    "deducible_usado": 0,
+    "preexistencias": []
+  },
+  {
+    "id": "PAC-003",
+    "nombre": "Juan Pérez",
+    "plan": "basico",
+    "vigente": true,
+    "deducible_anual": 150,
+    "deducible_usado": 150,
+    "preexistencias": ["asma"]
+  },
+  {
+    "id": "PAC-004",
+    "nombre": "Ana Jiménez",
+    "plan": "premium",
+    "vigente": false,
+    "deducible_anual": 500,
+    "deducible_usado": 0,
+    "preexistencias": []
+  },
+  {
+    "id": "PAC-005",
+    "nombre": "Roberto Salinas",
+    "plan": "medio",
+    "vigente": true,
+    "deducible_anual": 300,
+    "deducible_usado": 120,
+    "preexistencias": ["hipotiroidismo"]
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "especialidad": "medicina general",
+    "plan_basico": 15,
+    "plan_medio": 10,
+    "plan_premium": 5,
+    "requiere_referencia": false
+  },
+  {
+    "especialidad": "pediatría",
+    "plan_basico": 15,
+    "plan_medio": 10,
+    "plan_premium": 5,
+    "requiere_referencia": false
+  },
+  {
+    "especialidad": "cardiología",
+    "plan_basico": 40,
+    "plan_medio": 25,
+    "plan_premium": 10,
+    "requiere_referencia": true
+  },
+  {
+    "especialidad": "traumatología",
+    "plan_basico": 35,
+    "plan_medio": 20,
+    "plan_premium": 10,
+    "requiere_referencia": true
+  },
+  {
+    "especialidad": "ginecología",
+    "plan_basico": 30,
+    "plan_medio": 18,
+    "plan_premium": 8,
+    "requiere_referencia": false
+  },
+  {
+    "especialidad": "neurología",
+    "plan_basico": 45,
+    "plan_medio": 28,
+    "plan_premium": 12,
+    "requiere_referencia": true
+  },
+  {
+    "especialidad": "dermatología",
+    "plan_basico": 25,
+    "plan_medio": 15,
+    "plan_premium": 8,
+    "requiere_referencia": false
+  },
+  {
+    "especialidad": "oncología",
+    "plan_basico": 60,
+    "plan_medio": 40,
+    "plan_premium": 20,
+    "requiere_referencia": true
+  }
+]
