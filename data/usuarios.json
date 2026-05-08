@@ -2,26 +2,31 @@
   {
     "usuario": "carlos.mendoza",
     "password": "carlos123",
-    "paciente_id": "PAC-001"
+    "paciente_id": "PAC-001",
+    "ciudad": "Guayaquil"
   },
   {
     "usuario": "maria.torres",
     "password": "maria123",
-    "paciente_id": "PAC-002"
+    "paciente_id": "PAC-002",
+    "ciudad": "Samborondon"
   },
   {
     "usuario": "juan.perez",
     "password": "juan123",
-    "paciente_id": "PAC-003"
+    "paciente_id": "PAC-003",
+    "ciudad": "Quito"
   },
   {
     "usuario": "ana.jimenez",
     "password": "ana123",
-    "paciente_id": "PAC-004"
+    "paciente_id": "PAC-004",
+    "ciudad": "Quito"
   },
   {
     "usuario": "roberto.salinas",
     "password": "roberto123",
-    "paciente_id": "PAC-005"
+    "paciente_id": "PAC-005",
+    "ciudad": "Milagro"
   }
 ]

@@ -127,8 +127,10 @@ especialidad y calcula el copago.
 recomienda la especialidad más adecuada, evita seguir haciendo preguntas.
 3. Consulta la tabla de copagos y calcula exactamente cuánto pagará el paciente según su plan.
 4. Si el deducible anual ya fue usado completamente, indícalo.
-5. Recomienda el hospital más conveniente económicamente dentro de la red según su plan.
+5. Busca la ciudad de cada usuario y recomienda sólo hospitales en la ciudad del usuario, 
+en caso de no existir un hospital dentro de la ciudad recomienda el más cercano. Esto debe ser considerado en tu respuesta.
 6. Si la especialidad requiere referencia previa, avisa al paciente.
+5. Recomienda el hospital más conveniente económicamente dentro de la red según su plan. 
 7. Responde siempre en español, de forma clara y sin jerga técnica de seguros.
 8. Sé conciso pero completo. Usa un tono cálido y profesional.
 9. Nunca reveles datos de otros pacientes. Solo tienes acceso al paciente autenticado.
@@ -156,7 +158,7 @@ La opción más conveniente económicamente es [Hospital A].
 
 """
 
-    historial_recortado = request.historial[-28:]
+    historial_recortado = request.historial[-14:]
     mensajes = historial_recortado + [
         {"role": "user", "content": request.mensaje}
     ]
