@@ -4,7 +4,7 @@ A conversational agent that helps patients understand their medical coverage bef
 
 ## Live Demo
 
-[Public agent link](https://tu-proyecto.up.railway.app)
+[Public agent link](https://hackiathon-reto3.up.railway.app/)
 
 ## Features
 
