@@ -1,8 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+
 import anthropic
 import json
 import os
@@ -28,7 +28,13 @@ def cargar_datos():
         hospitales = json.load(f)
     with open("data/copagos.json", encoding="utf-8") as f:
         copagos = json.load(f)
-    return polizas, hospitales, copagos
+    with open("data/usuarios.json", encoding="utf-8") as f:
+        usuarios = json.load(f)
+    return polizas, hospitales, copagos, usuarios
+
+class LoginRequest(BaseModel):
+    usuario: str
+    password: str
 
 class MensajeRequest(BaseModel):
     mensaje: str
@@ -39,17 +45,68 @@ class MensajeRequest(BaseModel):
 def index():
     return FileResponse("index.html")
 
+@app.post("/login")
+def login(request: LoginRequest):
+    polizas, _, _, usuarios = cargar_datos()
+
+    usuario = next((u for u in usuarios
+        if u["usuario"] == request.usuario
+        and u["password"] == request.password), None)
+
+    if not usuario:
+        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
+
+    paciente = next((p for p in polizas if p["id"] == usuario["paciente_id"]), None)
+
+    deducible_disponible = paciente["deducible_anual"] - paciente["deducible_usado"]
+    estado_poliza = "Vigente" if paciente["vigente"] else "Vencida"
+
+    bienvenida = client.messages.create(
+        model="claude-opus-4-5",
+        max_tokens=300,
+        messages=[{
+                        "role": "user",
+                        "content": f"""
+                Genera un mensaje de bienvenida corto y cálido para un paciente que acaba de iniciar sesión 
+                en su asistente de cobertura médica. Incluye exactamente esta información:
+
+                - Nombre del paciente: {paciente["nombre"]}
+                - Estado de la póliza: {estado_poliza}
+                - Plan contratado: {paciente["plan"]}
+                - Deducible anual: ${paciente["deducible_anual"]}
+                - Deducible usado: ${paciente["deducible_usado"]}
+                - Deducible disponible: ${deducible_disponible}
+
+                El mensaje debe:
+                1. Saludar por el nombre
+                2. Mostrar el estado de la póliza con una viñeta
+                3. Mostrar el resumen del deducible con una viñeta
+                4. Invitar al paciente a describir su síntoma o consulta
+                5. Ser breve, máximo 5 líneas
+                6. No usar tablas, solo viñetas y texto
+                """
+                    }]
+    )
+
+    return {
+        "paciente_id": usuario["paciente_id"],
+        "nombre": paciente["nombre"],
+        "plan": paciente["plan"],
+        "vigente": paciente["vigente"],
+        "bienvenida": bienvenida.content[0].text
+    }
+
 @app.post("/chat")
 def chat(request: MensajeRequest):
-    polizas, hospitales, copagos = cargar_datos()
+    polizas, hospitales, copagos, _ = cargar_datos()
 
     paciente = next((p for p in polizas if p["id"] == request.paciente_id), None)
 
     if not paciente:
-        return {"respuesta": "No encontré tu póliza. Verifica tu ID de paciente."}
+        return {"respuesta": "No encontré tu póliza. Verifica tu sesión."}
 
     system_prompt = f"""
-Eres un asistente de seguros médicos amable y claro. Tu trabajo es ayudar al paciente a entender 
+Eres un asistente de seguros médicos amable y claro. Tu trabajo es ayudar al paciente a entender
 su cobertura antes de atenderse.
 
 DATOS DEL PACIENTE:
@@ -62,23 +119,51 @@ TABLA DE COPAGOS POR ESPECIALIDAD:
 {json.dumps(copagos, ensure_ascii=False, indent=2)}
 
 INSTRUCCIONES:
-1. Cuando el paciente describa un síntoma, identifica la especialidad médica más adecuada.
-2. Verifica si la póliza del paciente está vigente. Si no lo está, indícalo claramente.
+1. Cuando el paciente describa un síntoma, si necesitas más contexto para identificar 
+la especialidad correcta, haz una pregunta a la vez. Máximo 3 preguntas antes de 
+dar una recomendación. Una vez que tengas suficiente contexto, identifica la 
+especialidad y calcula el copago.
+2. Considera todas las respuestas dadas por el paciente y recomienda una especialidad. Si son diferentes,
+recomienda la especialidad más adecuada, evita seguir haciendo preguntas.
 3. Consulta la tabla de copagos y calcula exactamente cuánto pagará el paciente según su plan.
 4. Si el deducible anual ya fue usado completamente, indícalo.
 5. Recomienda el hospital más conveniente económicamente dentro de la red según su plan.
 6. Si la especialidad requiere referencia previa, avisa al paciente.
 7. Responde siempre en español, de forma clara y sin jerga técnica de seguros.
 8. Sé conciso pero completo. Usa un tono cálido y profesional.
+9. Nunca reveles datos de otros pacientes. Solo tienes acceso al paciente autenticado.
+10. No respondas con tablas, responde con texto separado por viñetas.
+11. Si los sintomas estan clasificados como para una emergencia, deriva directamente al paciente a
+atención de emergencia en el hospital mas cercano. Omite cualquier calculo o recomendación más económica.
+
+FORMATO DE RESPUESTA OBLIGATORIO cuando tengas suficiente contexto para recomendar:
+Responde siempre en texto corrido, sin tablas ni markdown. Sigue exactamente este orden:
+
+Primero: indica la especialidad recomendada y por qué.
+Segundo: explica la cobertura del plan del paciente para esa especialidad.
+Tercero: lista cada hospital disponible en la red con su copago estimado, uno por línea.
+Cuarto: recomienda el hospital más conveniente económicamente.
+Quinto: agrega una nota final útil, como validar disponibilidad o si necesita referencia previa.
+
+Ejemplo del tono y formato esperado:
+"Según los síntomas que describes, la especialidad recomendada es [especialidad] como primer punto de atención.
+Con tu plan [plan], tienes cobertura para [tipo de atención] dentro de la red.
+Las opciones disponibles en tu red son:
+- [Hospital A]: copago estimado de $[X]
+- [Hospital B]: copago estimado de $[X]
+La opción más conveniente económicamente es [Hospital A].
+[Nota adicional relevante].
+
 """
 
-    mensajes = request.historial + [
+    historial_recortado = request.historial[-28:]
+    mensajes = historial_recortado + [
         {"role": "user", "content": request.mensaje}
     ]
 
     respuesta = client.messages.create(
         model="claude-opus-4-5",
-        max_tokens=1000,
+        max_tokens=1024,
         system=system_prompt,
         messages=mensajes
     )

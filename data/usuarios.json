@@ -1,0 +1,27 @@
+[
+  {
+    "usuario": "carlos.mendoza",
+    "password": "carlos123",
+    "paciente_id": "PAC-001"
+  },
+  {
+    "usuario": "maria.torres",
+    "password": "maria123",
+    "paciente_id": "PAC-002"
+  },
+  {
+    "usuario": "juan.perez",
+    "password": "juan123",
+    "paciente_id": "PAC-003"
+  },
+  {
+    "usuario": "ana.jimenez",
+    "password": "ana123",
+    "paciente_id": "PAC-004"
+  },
+  {
+    "usuario": "roberto.salinas",
+    "password": "roberto123",
+    "paciente_id": "PAC-005"
+  }
+]
