@@ -94,5 +94,7 @@ Open `http://127.0.0.1:8000` in your browser.
 | ANTHROPIC_API_KEY | Anthropic API key |
 
 ## Author
+Kevin Franco
+Alejandra Cruz
 
 Developed for HackIAthon — Viamatica 2025
